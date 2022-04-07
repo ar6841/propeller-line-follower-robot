@@ -1,4 +1,4 @@
-Welcome.c
+LineFollower.c
 >compiler=C
 >memtype=cmm main ram compact
 >optimize=-Os

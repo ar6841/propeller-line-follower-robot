@@ -30,7 +30,7 @@ volatile bool adjustLeft = false;
  
 int main()
 {
-  irCog = cog_run(detectIR, 128);
+  irCog = cog_run(checkIR, 128);
   driveCog = cog_run(drive, 128);
 }
 

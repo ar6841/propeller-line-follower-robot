@@ -127,14 +127,14 @@ void adjustRight() {
   servo_speed(RIGHT_WHEEL_PIN, STOP_SPEED);
   servo_speed(LEFT_WHEEL_PIN, ADJUST_SPEED); 
   pause(ADJUST_DELAY);  
-  servo_speed(LEFT_WHEEL_PIN, FORWARD_SPEED); 
+  driveForward();
 }  
 
 void adjustLeft() {
   servo_speed(RIGHT_WHEEL_PIN, ADJUST_SPEED * -1);
   servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);   
   pause(ADJUST_DELAY);
-  servo_speed(RIGHT_WHEEL_PIN, FORWARD_SPEED * -1);
+  driveForward();
 }  
 
 void turnRight(){

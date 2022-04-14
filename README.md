@@ -1,2 +1,2 @@
 # propeller-line-follower-robot
-A Propeller-based automated vehicle that can follow visual lines and detect and avoid objects.
+A Propeller microcontroller based automated vehicle that can follow visual lines and detect and avoid objects.

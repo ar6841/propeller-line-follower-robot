@@ -1,5 +1,5 @@
-#include "simpletools.h"  
-#include "servo.h"     
+#include "simpletools.h"
+#include "servo.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include "ping.h"
@@ -52,11 +52,10 @@ static volatile int numObjectsDetected = 0;
 static volatile bool obstacleDetected = false;
 static volatile bool lookForObstacleOnRight = true;
  
-int main()
-{  
+int main() {  
   followLineCog = cog_run(followLine, 128);
   
-  while(1){
+  while(1) {
     if(obstacleDetected && numObjectsDetected == 2) {
       stopWheels();
       cog_end(followLineCog); 
@@ -65,8 +64,8 @@ int main()
 }  
 
 void followLine() {
-  while(1){
-    int leftIR = input(LEFT_IR_PIN); 
+  while(1) {
+    int leftIR = input(LEFT_IR_PIN);
     int rightIR = input(RIGHT_IR_PIN);
          
     if(leftIR == 1 && rightIR == 0) {
@@ -75,8 +74,7 @@ void followLine() {
       adjustRight();
     } else if(leftIR == 1 && rightIR == 1) {
       handleIntersectionDetected();
-    }
-    else{
+    } else {
       driveForward();
     }     
   }         
@@ -87,23 +85,23 @@ void detectObject() {
     int cmDist = ping_cm(LEFT_ULTRASONIC_PIN);
     bool objectDetected = (cmDist > 0 && cmDist < MAX_OBJECT_DISTANCE);
     
-    if(objectDetected) { 
+    if(objectDetected) {
       numObjectsDetected++;
       
       high(OBJECT_DETECTION_LED);
       pause(750);
       low(OBJECT_DETECTION_LED);
               
-       if(numObjectsDetected == 2) {        
+       if(numObjectsDetected == 2) {
          cog_end(detectObjectCog);
        }
      
-      pause(2500);      
+      pause(2500);
     }
   }
 }
 
-void detectObstacle() {    
+void detectObstacle() {
   while(1) {
     int ultrasonicPin = lookForObstacleOnRight ? RIGHT_ULTRASONIC_PIN : LEFT_ULTRASONIC_PIN;
     int cmDist = ping_cm(ultrasonicPin);
@@ -124,7 +122,7 @@ void handleIntersectionDetected() {
   
   if(numIntersection > 1) {
     intersectionBlinkCog = cog_run(intersectionBlink, 128);
-  }  
+  }
 
   switch(numIntersection) {
     case 1: // merge
@@ -138,7 +136,7 @@ void handleIntersectionDetected() {
       turnRight();
       detectObjectCog = cog_run(detectObject, 128);
       detectObstacleCog = cog_run(detectObstacle, 128);
-      break;    
+      break;
     case 7: // B4
       turnRight();
       cog_end(detectObjectCog);
@@ -148,8 +146,8 @@ void handleIntersectionDetected() {
       break;
     case 9: // A4
       turnRight();
-      detectObjectCog = cog_run(detectObject, 128);   
-      break; 
+      detectObjectCog = cog_run(detectObject, 128);
+      break;
     case 12: // A1 - finish first loop
       turnRight();
       break;
@@ -172,40 +170,39 @@ void intersectionBlink() {
   pause(500);
   low(INTERSECTION_DETECTION_LED);
   
-  cog_end(intersectionBlinkCog);           
-}  
+  cog_end(intersectionBlinkCog);
+}
 
 void driveForward() {
   servo_speed(RIGHT_WHEEL_PIN, FORWARD_SPEED * -1);
-  servo_speed(LEFT_WHEEL_PIN, FORWARD_SPEED - 7);   
-}  
+  servo_speed(LEFT_WHEEL_PIN, FORWARD_SPEED - 7);
+}
 
 void adjustRight() {
   servo_speed(RIGHT_WHEEL_PIN, STOP_SPEED);
-  servo_speed(LEFT_WHEEL_PIN, ADJUST_SPEED); 
-  pause(ADJUST_DELAY);  
-}  
+  servo_speed(LEFT_WHEEL_PIN, ADJUST_SPEED);
+  pause(ADJUST_DELAY);
+}
 
 void adjustLeft() {
   servo_speed(RIGHT_WHEEL_PIN, ADJUST_SPEED * -1);
-  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);   
+  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);
   pause(ADJUST_DELAY);
-}  
+}
 
-void turnRight(){
+void turnRight() {
   servo_speed(RIGHT_WHEEL_PIN, STOP_SPEED);
-  servo_speed(LEFT_WHEEL_PIN, TURN_SPEED); 
-  pause(TURN_DELAY + EXTRA_RIGHT_TURN_DELAY);  
-} 
-
+  servo_speed(LEFT_WHEEL_PIN, TURN_SPEED);
+  pause(TURN_DELAY + EXTRA_RIGHT_TURN_DELAY);
+}
  
-void turnLeft(){
+void turnLeft() {
   servo_speed(RIGHT_WHEEL_PIN, TURN_SPEED * -1);
-  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);   
+  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);
   pause(TURN_DELAY);
 }
  
 void stopWheels() {
   servo_speed(RIGHT_WHEEL_PIN, STOP_SPEED);
-  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);   
+  servo_speed(LEFT_WHEEL_PIN, STOP_SPEED);
 }

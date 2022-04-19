@@ -53,97 +53,60 @@ static volatile bool obstacleDetected = false;
 static volatile bool lookForObstacleOnRight = true;
  
 int main()
-{ 
-  //stopWheels();
-  //print("Starting");
-  //simpleterm_close();
-  //detectObject();
- 
+{  
   followLineCog = cog_run(followLine, 128);
   
   while(1){
     if(obstacleDetected && numObjectsDetected == 2) {
       stopWheels();
-      cog_end(followLineCog);
-     
+      cog_end(followLineCog); 
     }  
-    //printf("\n num Intersection=%d \t objs= %d\t obstacle= %d \t obstacle right %d",numIntersection,numObjectsDetected,obstacleDetected,lookForObstacleOnRight);
-     //pause(250);
-    
-  }    
- 
+  }     
 }  
-    
-
 
 void followLine() {
- // bool shouldDetectIntersection = true;
-  int leftIR=0;
-  int rightIR=0;  
   while(1){
-    leftIR = input(LEFT_IR_PIN); 
-    rightIR = input(RIGHT_IR_PIN);
+    int leftIR = input(LEFT_IR_PIN); 
+    int rightIR = input(RIGHT_IR_PIN);
          
     if(leftIR == 1 && rightIR == 0) {
-      //shouldDetectIntersection = true;
-      //cogend(detectObjectCog);
       adjustLeft();
     } else if(leftIR == 0 && rightIR == 1) {
-      //shouldDetectIntersection = true;
-      //cogend(detectObjectCog);
       adjustRight();
     } else if(leftIR == 1 && rightIR == 1) {
-     // shouldDetectIntersection = false;
       handleIntersectionDetected();
     }
     else{
-      //shouldDetectIntersection = true;
       driveForward();
     }     
   }         
 }  
 
 void detectObject() {
-  //bool shouldDetectObject = true;
-  int cmDist=0;
-  bool objectDetected=false;
   while(1) {
-    cmDist = ping_cm(LEFT_ULTRASONIC_PIN);
-    objectDetected = (cmDist > 0 && cmDist < MAX_OBJECT_DISTANCE);
+    int cmDist = ping_cm(LEFT_ULTRASONIC_PIN);
+    bool objectDetected = (cmDist > 0 && cmDist < MAX_OBJECT_DISTANCE);
     
-    if(objectDetected) {
-      
+    if(objectDetected) { 
       numObjectsDetected++;
       
       high(OBJECT_DETECTION_LED);
       pause(750);
       low(OBJECT_DETECTION_LED);
-     // if(shouldDetectObject) {
-      // shouldDetectObject = false;
-      // numObjectsDetected++;
-       
-      // high(OBJECT_DETECTION_LED);
-      // pause(750);
-      // low(OBJECT_DETECTION_LED);
               
        if(numObjectsDetected == 2) {        
          cog_end(detectObjectCog);
        }
-     //} 
+     
       pause(2500);      
-    } //else {
-      //shouldDetectObject = true;
-    //}
-
+    }
   }
 }
 
 void detectObstacle() {    
-  int ultrasonicPin;
-  int cmDist=0;
   while(1) {
-    ultrasonicPin = lookForObstacleOnRight ? RIGHT_ULTRASONIC_PIN : LEFT_ULTRASONIC_PIN;
-    cmDist = ping_cm(ultrasonicPin);
+    int ultrasonicPin = lookForObstacleOnRight ? RIGHT_ULTRASONIC_PIN : LEFT_ULTRASONIC_PIN;
+    int cmDist = ping_cm(ultrasonicPin);
     obstacleDetected = cmDist != 0 && cmDist < MAX_OBSTACLE_DISTANCE;
    
     if(obstacleDetected) {
@@ -175,16 +138,13 @@ void handleIntersectionDetected() {
       turnRight();
       detectObjectCog = cog_run(detectObject, 128);
       detectObstacleCog = cog_run(detectObstacle, 128);
-      break;
-    
+      break;    
     case 7: // B4
       turnRight();
       cog_end(detectObjectCog);
       lookForObstacleOnRight = false;
-      //detectObstacleCog = cog_run(detectObstacle, 128);
-      
       driveForward();
-      pause(500);
+      pause(500); // Give time for turn
       break;
     case 9: // A4
       turnRight();
@@ -202,7 +162,7 @@ void handleIntersectionDetected() {
       break;
     default:
       driveForward();
-      pause(550);
+      pause(550); // Clear intersection
       break;
   }
 }
